@@ -14,7 +14,6 @@ public class BusylightTest {
       Thread.sleep(5000);
       busylight.blinkWithTone(new int[] {0, 140, 140}, 1000, Tone.FAIRY_TALE);
       Thread.sleep(10000);
-
     }
   }
 }

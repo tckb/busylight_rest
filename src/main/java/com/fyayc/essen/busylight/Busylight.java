@@ -89,7 +89,7 @@ public class Busylight implements Closeable {
                     .withTone(bgTone, volume)
                     .get();
             send(currentBuffer);
-            Thread.sleep(2000);
+            Thread.sleep(2500);
             currentBuffer = BlDriverBuffer.emptyBuffer();
             send(currentBuffer);
             Thread.sleep(freq);
