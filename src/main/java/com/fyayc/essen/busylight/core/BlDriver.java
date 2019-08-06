@@ -1,6 +1,6 @@
 package com.fyayc.essen.busylight.core;
 
-import static com.fyayc.essen.busylight.core.BlConstants.MAX_BUFFER_LENGTH;
+import static com.fyayc.essen.busylight.core.BlConstants.BUFFER_LENGTH;
 
 import com.fyayc.essen.busylight.core.BlConstants.BufferPositions;
 import java.io.Closeable;
@@ -35,16 +35,20 @@ public class BlDriver implements Closeable {
   }
 
   public void sendBuffer(int[] buffer) {
-    if (buffer.length != MAX_BUFFER_LENGTH) {
+    if (buffer.length != BUFFER_LENGTH) {
       throw new UnsupportedOperationException(
-          "BlDriverBuffer length mismatch; expecting " + MAX_BUFFER_LENGTH);
+          "BlDriverBuffer length mismatch; expecting " + BUFFER_LENGTH);
     }
     int[] checksumBytes = calcChecksum(buffer);
     byte[] dataToWrite = getBytes(buffer, checksumBytes);
     physicalDevice.write(dataToWrite, dataToWrite.length, (byte) 0);
   }
 
-  private byte[] getBytes(int[] data, int[] checksum) {
+  public void sendBuffer(byte[] buffer) {
+    physicalDevice.write(buffer, 64, (byte) 0);
+  }
+
+  public static byte[] getBytes(int[] data, int[] checksum) {
     byte[] bytes = new byte[data.length + checksum.length];
     for (int i = 0; i < data.length; i++) {
       bytes[i] = (byte) data[i];
@@ -54,7 +58,7 @@ public class BlDriver implements Closeable {
     return bytes;
   }
 
-  private int[] calcChecksum(int[] dataToWrite) {
+  public int[] calcChecksum(int[] dataToWrite) {
     int dataSum = IntStream.of(dataToWrite).sum();
     // MSB and LSB of datasum
     return new int[] {((dataSum >> 8) & 0xffff), dataSum % 256};

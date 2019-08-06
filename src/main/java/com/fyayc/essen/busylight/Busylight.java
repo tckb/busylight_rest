@@ -10,6 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Busylight implements Closeable {
+  private static final long SHORT_PULSE_INTERVAL = 25;
   private final long HEARTBEAT_INTERVAL = 100;
   private final BlDriver driver;
   private Timer timer;
@@ -33,7 +34,7 @@ public class Busylight implements Closeable {
           }
         };
     showInit();
-    timer.scheduleAtFixedRate(heartBeatTask, 1000, HEARTBEAT_INTERVAL);
+    timer.scheduleAtFixedRate(heartBeatTask, 2000, HEARTBEAT_INTERVAL);
   }
 
   public static Busylight find() {
@@ -41,17 +42,18 @@ public class Busylight implements Closeable {
   }
 
   private void showInit() throws InterruptedException {
-    sendShortPulse(255, 0, 0);
+    sendShortPulseTone(255, 0, 0);
     Thread.sleep(1000);
-    sendShortPulse(0, 255, 0);
+    sendShortPulseTone(0, 255, 0);
     Thread.sleep(1000);
-    sendShortPulse(0, 0, 255);
+    sendShortPulseTone(0, 0, 255);
     Thread.sleep(1000);
   }
 
-  private void sendShortPulse(int r, int g, int b) throws InterruptedException {
-    send(BlDriverBuffer.color(r, g, b));
-    Thread.sleep(10);
+  private void sendShortPulseTone(int r, int g, int b) throws InterruptedException {
+    Thread.sleep(SHORT_PULSE_INTERVAL);
+    send(BlDriverBuffer.empty().withColor(r, g, b).withTone(Tone.TEST).get());
+    Thread.sleep(SHORT_PULSE_INTERVAL);
     send(BlDriverBuffer.emptyBuffer());
   }
 
@@ -62,7 +64,7 @@ public class Busylight implements Closeable {
             currentBuffer = BlDriverBuffer.color(rgb[0], rgb[1], rgb[2]);
             send(currentBuffer);
             if (shortPulse) {
-              Thread.sleep(10);
+              Thread.sleep(SHORT_PULSE_INTERVAL);
             } else {
               Thread.sleep(100);
             }
@@ -75,7 +77,7 @@ public class Busylight implements Closeable {
         };
   }
 
-  public void blinkWithTone(int[] rgb, long freq, Tone bgTone) {
+/**/  public void blinkWithTone(int[] rgb, long freq, Tone bgTone) {
     blinkWithTone(rgb, freq, bgTone, BlConstants.MAX_VOLUME / 2);
   }
 

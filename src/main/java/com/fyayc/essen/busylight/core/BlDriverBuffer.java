@@ -20,9 +20,9 @@ public final class BlDriverBuffer {
   }
 
   public static void color(int[] buffer, int r, int g, int b) {
-    buffer[BufferPositions.RED.ix] = r;
-    buffer[BufferPositions.GREEN.ix] = g;
-    buffer[BufferPositions.BLUE.ix] = b;
+    buffer[BufferPositions.RED.ix] = color2Intensity(r);
+    buffer[BufferPositions.GREEN.ix] = color2Intensity(g);
+    buffer[BufferPositions.BLUE.ix] = color2Intensity(b);
   }
 
   public static int[] color(int r, int g, int b) {
@@ -50,6 +50,10 @@ public final class BlDriverBuffer {
     buffer[BufferPositions.GREEN.ix] = 0;
     buffer[BufferPositions.BLUE.ix] = 0;
     buffer[BufferPositions.TONE.ix] = Tone.NONE.getValue(0);
+  }
+  // convert scale from 0-255 => 0-100
+  private static int color2Intensity(int color){
+    return (color * 100 / 255);
   }
 
   public static class Builder {
