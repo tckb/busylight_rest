@@ -16,7 +16,8 @@ public class BlDriver implements Closeable {
   private BlDriver() {
     HidServices hidServices = HidManager.getHidServices();
     for (HidDevice hidDevice : hidServices.getAttachedHidDevices()) {
-      if (hidDevice.getProduct().contains(BlConstants.PRODUCT_STRING)) {
+      if (hidDevice.getVendorId() == BlConstants.SUPPORTED_VENDOR_ID
+          && isValidProductId(hidDevice.getProductId())) {
         physicalDevice = hidDevice;
       }
     }
@@ -29,6 +30,13 @@ public class BlDriver implements Closeable {
       throw new UnsupportedOperationException(
           "Unable to open the device, is it already opened by some other process?");
     }
+  }
+
+  private boolean isValidProductId(short productId) {
+    for (short supportedProductId : BlConstants.SUPPORTED_PRODUCT_IDS) {
+      if (productId == supportedProductId) return true;
+    }
+    return false;
   }
 
   public void sendBuffer(byte[] buffer) {

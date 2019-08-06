@@ -1,12 +1,8 @@
 package com.fyayc.essen.busylight.core;
 
 public final class BlConstants {
-
-  public static final int MAX_VOLUME = 7;
-  public static final int MIN_VOLUME = 0;
-  static final String PRODUCT_STRING = "BUSYLIGHT";
-  static final int PRODUCT_ID = 15309;
-  static final int VENDOR_ID = 10171;
+  static final short[] SUPPORTED_PRODUCT_IDS = new short[] {0x3BCA, 0x3BCB, 0x3BCC, 0x3BCD};
+  static final short SUPPORTED_VENDOR_ID = 0x27BB;
 
   public enum Tone {
     OPENOFFICE(136),
@@ -25,14 +21,6 @@ public final class BlConstants {
 
     Tone(int value) {
       this.value = value;
-    }
-
-    int getValue(int volume) {
-      int actualVol = volume;
-      if (volume < MIN_VOLUME) actualVol = MIN_VOLUME;
-      if (volume > MAX_VOLUME) actualVol = MAX_VOLUME;
-
-      return value + actualVol;
     }
   }
 }

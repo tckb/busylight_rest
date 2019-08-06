@@ -11,7 +11,7 @@ public class Tone extends StepByte {
 
   public static Tone noSettings() {
     Tone toneByte = new Tone();
-    toneByte.bitStore().setBit(7, false);
+    toneByte.bitStore().setBit(8, false);
     return toneByte;
   }
 
