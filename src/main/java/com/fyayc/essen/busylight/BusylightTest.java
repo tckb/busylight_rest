@@ -8,34 +8,32 @@ import com.fyayc.essen.busylight.core.protocol.bytes.Command;
 import com.fyayc.essen.busylight.core.protocol.bytes.Repeat;
 import com.fyayc.essen.busylight.core.protocol.bytes.Time;
 import com.fyayc.essen.busylight.core.protocol.bytes.Tone;
+import com.fyayc.essen.busylight.core.protocol.bytes.Tone.Tones;
 
 public class BusylightTest {
   public static void main(String[] args) throws InterruptedException {
     try (BlDriver driver = BlDriver.tryAndAcquire()) {
-      for (int i = 0; i < 16; i++) {
         ProtocolV2Spec protocol =
             ProtocolV2Spec.builder()
                 .addStep(
                     ProtocolStep.builder()
                         .color(Color.EMPTY, Color.EMPTY, Color.EMPTY)
                         .light(Time.forDuration(0), Time.forDuration(0))
-                        .repeatStep(Repeat.DO_NOT_REPEAT)
                         .tone(Tone.TURN_OFF_TONE)
+                        .repeat(Repeat.DO_NOT_REPEAT)
                         .command(Command.nextStep(1))
                         .build())
                 .addStep(
                     ProtocolStep.builder()
-                        .color(Color.ofPixel(i+50), Color.ofIntensity(i+10), Color.ofIntensity(i))
+                        .color(Color.ofPixel(10), Color.ofIntensity(50), Color.ofIntensity(80))
                         .light(Time.forDuration(3), Time.forDuration(0))
-                        .repeatStep(Repeat.DO_NOT_REPEAT)
-                        .tone(Tone.forSettings(i, 7))
+                        .tone(Tone.forSettings(Tones.TELEPHONIC_PICKMEUP, 7))
+                        .repeat(Repeat.DO_NOT_REPEAT)
                         .command(Command.nextStep(0))
                         .build())
                 .build();
-        System.out.println("playing : " + i);
         driver.sendBuffer(protocol.toBytes());
         Thread.sleep(6000);
-      }
     }
   }
 }

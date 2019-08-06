@@ -82,7 +82,7 @@ public class ProtocolStep {
       return add(0, command);
     }
 
-    public StepBuilder repeatStep(StepByte repeat) {
+    public StepBuilder repeat(StepByte repeat) {
       return add(1, repeat);
     }
 
