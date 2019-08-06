@@ -1,57 +1,18 @@
 package com.fyayc.essen.busylight.core.protocol;
 
-import com.fyayc.essen.busylight.core.BlDriver;
-import com.fyayc.essen.busylight.core.protocol.bytes.Color;
-import com.fyayc.essen.busylight.core.protocol.bytes.Command;
-import com.fyayc.essen.busylight.core.protocol.bytes.Repeat;
 import com.fyayc.essen.busylight.core.protocol.bytes.StepByte;
-import com.fyayc.essen.busylight.core.protocol.bytes.Time;
-import com.fyayc.essen.busylight.core.protocol.bytes.Tone;
 import com.tomgibara.bits.BitStore;
 import com.tomgibara.bits.Bits;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class ProtocolSpec {
+public class ProtocolV2Spec {
   public static final int BYTE_LENGTH = 64;
   private static final int SPEC_STEPS = 8;
   private final ProtocolStep[] steps;
 
-  public ProtocolSpec(ProtocolStep[] steps) {
+  public ProtocolV2Spec(ProtocolStep[] steps) {
     this.steps = steps;
-  }
-
-  public static void main(String[] args) throws InterruptedException {
-    ProtocolSpec protocol =
-        ProtocolSpec.builder()
-            .addStep(
-                ProtocolStep.builder()
-                    .color( Color.EMPTY, Color.EMPTY,Color.ofIntensity(20))
-                    .light(Time.forDuration(0.5), Time.forDuration(0.5))
-                    .repeatStep(Repeat.ofTimes(3))
-                    .tone(Tone.TURN_OFF_TONE)
-                    .command(Command.nextStep(1))
-                    .build())
-            .addStep(
-                ProtocolStep.builder()
-                    .color(Color.ofIntensity(80), Color.EMPTY, Color.EMPTY)
-                    .light(Time.forDuration(1.5), Time.forDuration(0.5))
-                    .repeatStep(Repeat.ofTimes(5))
-                    .tone(Tone.noSettings())
-                    .command(Command.nextStep(2))
-                    .build())
-            .addStep(
-                ProtocolStep.builder()
-                    .color(Color.EMPTY, Color.EMPTY,Color.ofIntensity(100))
-                    .light(Time.forDuration(10), Time.forDuration(0))
-                    .repeatStep(Repeat.ofTimes(1))
-                    .tone(Tone.forSettings(13, 7))
-                    .command(Command.nextStep(0))
-                    .build())
-            .build();
-    System.out.println(protocol.toHexString());
-    BlDriver driver = BlDriver.tryAndAcquire();
-    driver.sendBuffer(protocol.toBytes());
   }
 
   public static SpecBuilder builder() {
@@ -79,7 +40,7 @@ public class ProtocolSpec {
     private ProtocolStep[] steps;
 
     public SpecBuilder() {
-      steps = new ProtocolStep[ProtocolSpec.SPEC_STEPS];
+      steps = new ProtocolStep[ProtocolV2Spec.SPEC_STEPS];
     }
 
     public SpecBuilder addStep(ProtocolStep step) {
@@ -98,7 +59,7 @@ public class ProtocolSpec {
       return this;
     }
 
-    public ProtocolSpec build() {
+    public ProtocolV2Spec build() {
       if (currentStep < 8) {
         for (int i = 0; i < steps.length; i++) {
           ProtocolStep step = steps[i];
@@ -112,7 +73,7 @@ public class ProtocolSpec {
       steps[7].setByte(checksumBytes[1], 6);
       steps[7].setByte(checksumBytes[0], 7);
 
-      return new ProtocolSpec(steps);
+      return new ProtocolV2Spec(steps);
     }
 
     private ProtocolStep generateMetaStep() {

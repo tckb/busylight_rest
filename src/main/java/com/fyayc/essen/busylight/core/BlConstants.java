@@ -2,27 +2,11 @@ package com.fyayc.essen.busylight.core;
 
 public final class BlConstants {
 
-  public static final int BUFFER_LENGTH = 62;
   public static final int MAX_VOLUME = 7;
   public static final int MIN_VOLUME = 0;
   static final String PRODUCT_STRING = "BUSYLIGHT";
   static final int PRODUCT_ID = 15309;
   static final int VENDOR_ID = 10171;
-
-  enum BufferPositions {
-    RED(2),
-    GREEN(3),
-    BLUE(4),
-    TONE(7),
-    CHECKSUM_MSB(62),
-    CHECKSUM_LSB(63);
-
-    final int ix;
-
-    BufferPositions(int index) {
-      ix = index;
-    }
-  }
 
   public enum Tone {
     OPENOFFICE(136),
