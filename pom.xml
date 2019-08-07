@@ -5,8 +5,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.fyayc.essen</groupId>
-  <artifactId>bluelight</artifactId>
-  <version>0.1-beta</version>
+  <artifactId>bluelight-core</artifactId>
+  <version>0.1</version>
   <build>
     <plugins>
       <plugin>
