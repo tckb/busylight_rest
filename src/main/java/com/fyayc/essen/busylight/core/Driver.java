@@ -1,8 +1,8 @@
 package com.fyayc.essen.busylight.core;
 
-import com.fyayc.essen.busylight.core.protocol.SpecConstants;
-import com.fyayc.essen.busylight.core.protocol.SpecConstants.StatusSpec;
 import com.fyayc.essen.busylight.core.protocol.ProtocolSpec;
+import com.fyayc.essen.busylight.core.protocol.SpecConstants;
+import com.fyayc.essen.busylight.core.protocol.SpecConstants.Specs;
 import com.tomgibara.bits.Bits;
 import java.io.Closeable;
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +15,7 @@ import org.hid4java.HidServices;
 public class Driver implements Closeable {
   protected static final Logger logger = LogManager.getLogger(Driver.class);
   private HidDevice physicalDevice;
+  private KeepAliveThread keepAliveThread;
 
   private Driver() {
     logger.trace("Searching for compatible  devices");
@@ -47,6 +48,8 @@ public class Driver implements Closeable {
       throw new UnsupportedOperationException(
           "Unable to open the device, is it already opened by some other process?");
     }
+    keepAliveThread = new KeepAliveThread(10_000);
+    keepAliveThread.start();
   }
 
   public static Driver tryAndAcquire() {
@@ -86,16 +89,15 @@ public class Driver implements Closeable {
    *
    * @param buffer the buffer
    */
-  public void send(StatusSpec buffer) {
-    logger.info("Sending {}",buffer);
+  public void send(Specs buffer) {
+    logger.info("Sending {}", buffer);
     send(buffer.protocol);
   }
-
-
 
   @Override
   public void close() {
     logger.info("Closing the device connection");
+    keepAliveThread.interrupt = true;
     physicalDevice.close();
   }
 
@@ -110,5 +112,30 @@ public class Driver implements Closeable {
 
   private static class DriverHelper {
     private static final Driver INSTANCE = new Driver();
+  }
+
+  private class KeepAliveThread extends Thread {
+    private final Logger logger = LogManager.getLogger(KeepAliveThread.class);
+    private final long keepAliveFreq;
+    private boolean interrupt = false;
+
+    private KeepAliveThread(long frqeuency) {
+      super("busylight-keepalive-thread");
+      this.setDaemon(true);
+      this.keepAliveFreq = frqeuency;
+      logger.info("Starting the keep alive thread with freq {} mills", keepAliveFreq);
+    }
+
+    @Override
+    public void run() {
+      while (!interrupt) {
+        try {
+          send(Specs.KEEP_ALIVE);
+          Thread.sleep(keepAliveFreq);
+        } catch (InterruptedException e) {
+          logger.error("Busylight keep-alive thread interrupted ", e);
+        }
+      }
+    }
   }
 }

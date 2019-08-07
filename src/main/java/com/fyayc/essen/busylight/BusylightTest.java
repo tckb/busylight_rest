@@ -1,13 +1,15 @@
 package com.fyayc.essen.busylight;
 
 import com.fyayc.essen.busylight.core.Driver;
-import com.fyayc.essen.busylight.core.protocol.SpecConstants.StatusSpec;
+import com.fyayc.essen.busylight.core.protocol.SpecConstants;
+import com.fyayc.essen.busylight.core.protocol.SpecConstants.Light;
 
 public class BusylightTest {
   public static void main(String[] args) throws InterruptedException {
-    BusylightKeepAliveThread busylight = new BusylightKeepAliveThread(5_000);
-    busylight.start();
-    Driver.tryAndAcquire().send(StatusSpec.DO_NOT_DISTURB);
-    Thread.sleep(60_000);
+    try (Driver driver = Driver.tryAndAcquire()) {
+      driver.send(SpecConstants.lightSpec(Light.BUSY));
+      Thread.sleep(5_000);
+      driver.send(SpecConstants.blinkSpec(Light.YELLOW));
+    }
   }
 }

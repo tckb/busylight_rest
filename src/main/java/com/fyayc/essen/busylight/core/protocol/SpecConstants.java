@@ -10,7 +10,7 @@ public final class SpecConstants {
   public static final short[] SUPPORTED_PRODUCT_IDS = new short[] {0x3BCA, 0x3BCB, 0x3BCC, 0x3BCD};
   public static final short SUPPORTED_VENDOR_ID = 0x27BB;
 
-  public static ProtocolSpec light(Light light) {
+  public static ProtocolSpec lightSpec(Light light) {
     return ProtocolSpec.builder()
         .addStep(
             ProtocolStep.builder()
@@ -21,7 +21,7 @@ public final class SpecConstants {
         .build();
   }
 
-  public static ProtocolSpec blink(Light light) {
+  public static ProtocolSpec blinkSpec(Light light) {
     return ProtocolSpec.builder()
         .addStep(
             ProtocolStep.builder()
@@ -86,13 +86,13 @@ public final class SpecConstants {
     }
   }
 
-  public enum StatusSpec {
+  public enum Specs {
     BUSY_IN_CALL(
         ProtocolSpec.builder()
             .addStep(
                 ProtocolStep.builder()
                     .light(Color.ofIntensity(14), Color.EMPTY, Color.EMPTY)
-                    .lightDuration(Time.forDuration(0.3), Time.forDuration(0))
+                    .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
                     .command(Command.nextStep(1))
                     .build())
             .addStep(
@@ -184,7 +184,7 @@ public final class SpecConstants {
 
     public final ProtocolSpec protocol;
 
-    StatusSpec(ProtocolSpec protocol) {
+    Specs(ProtocolSpec protocol) {
       this.protocol = protocol;
     }
   }
