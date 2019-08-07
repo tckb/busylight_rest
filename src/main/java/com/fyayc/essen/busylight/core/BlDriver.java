@@ -1,5 +1,6 @@
 package com.fyayc.essen.busylight.core;
 
+import com.fyayc.essen.busylight.core.protocol.ProtocolConstants;
 import java.io.Closeable;
 import org.hid4java.HidDevice;
 import org.hid4java.HidManager;
@@ -16,7 +17,7 @@ public class BlDriver implements Closeable {
   private BlDriver() {
     HidServices hidServices = HidManager.getHidServices();
     for (HidDevice hidDevice : hidServices.getAttachedHidDevices()) {
-      if (hidDevice.getVendorId() == BlConstants.SUPPORTED_VENDOR_ID
+      if (hidDevice.getVendorId() == ProtocolConstants.SUPPORTED_VENDOR_ID
           && isValidProductId(hidDevice.getProductId())) {
         physicalDevice = hidDevice;
       }
@@ -33,7 +34,7 @@ public class BlDriver implements Closeable {
   }
 
   private boolean isValidProductId(short productId) {
-    for (short supportedProductId : BlConstants.SUPPORTED_PRODUCT_IDS) {
+    for (short supportedProductId : ProtocolConstants.SUPPORTED_PRODUCT_IDS) {
       if (productId == supportedProductId) return true;
     }
     return false;

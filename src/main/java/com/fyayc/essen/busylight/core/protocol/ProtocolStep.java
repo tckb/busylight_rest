@@ -1,5 +1,6 @@
 package com.fyayc.essen.busylight.core.protocol;
 
+import com.fyayc.essen.busylight.core.protocol.ProtocolConstants.LightStatus;
 import com.fyayc.essen.busylight.core.protocol.bytes.StepByte;
 import com.google.common.base.MoreObjects;
 import java.util.stream.Stream;
@@ -86,11 +87,15 @@ public class ProtocolStep {
       return add(1, repeat);
     }
 
-    public StepBuilder color(StepByte red, StepByte green, StepByte blue) {
+    public StepBuilder light(StepByte red, StepByte green, StepByte blue) {
       return add(2, red).add(3, green).add(4, blue);
     }
 
-    public StepBuilder light(StepByte on, StepByte off) {
+    public StepBuilder light(LightStatus status) {
+      return light(status.rgbBytes[0], status.rgbBytes[1], status.rgbBytes[2]);
+    }
+
+    public StepBuilder lightDuration(StepByte on, StepByte off) {
       return add(5, on).add(6, off);
     }
 
