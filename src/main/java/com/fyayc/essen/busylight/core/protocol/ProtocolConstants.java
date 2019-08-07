@@ -5,6 +5,7 @@ import com.fyayc.essen.busylight.core.protocol.bytes.Command;
 import com.fyayc.essen.busylight.core.protocol.bytes.StepByte;
 import com.fyayc.essen.busylight.core.protocol.bytes.Time;
 
+/** Constants that can be used to build the procotocol */
 public final class ProtocolConstants {
   public static final short[] SUPPORTED_PRODUCT_IDS = new short[] {0x3BCA, 0x3BCB, 0x3BCC, 0x3BCD};
   public static final short SUPPORTED_VENDOR_ID = 0x27BB;
@@ -22,7 +23,7 @@ public final class ProtocolConstants {
     IM_2(10),
     IM_3(13);
 
-    private final int value;
+    public final int value;
 
     Tones(int value) {
       this.value = value;

@@ -5,9 +5,16 @@ import com.tomgibara.bits.BitStore;
 import com.tomgibara.bits.Bits;
 import java.util.Arrays;
 import java.util.stream.Stream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+/**
+ * the buffer that has to be sent to the device according to the communication protocol as per the
+ * spec v2. more often than not, you need to use the builder
+ */
 public class ProtocolSpec {
   public static final int BYTE_LENGTH = 64;
+  protected static final Logger logger = LogManager.getLogger(ProtocolSpec.class);
   private static final int SPEC_STEPS = 8;
   private final ProtocolStep[] steps;
 

@@ -4,9 +4,13 @@ import com.fyayc.essen.busylight.core.protocol.ProtocolConstants.LightStatus;
 import com.fyayc.essen.busylight.core.protocol.bytes.StepByte;
 import com.google.common.base.MoreObjects;
 import java.util.stream.Stream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+/** a protocol step */
 public class ProtocolStep {
   public static final int BYTE_LENGTH = 8;
+  protected static final Logger logger = LogManager.getLogger(ProtocolStep.class);
   private final StepByte[] stepBytes;
 
   public ProtocolStep(StepByte[] stepBytes) {

@@ -28,6 +28,4 @@ public class Command extends StepByte {
     }
     return keepAliveByte;
   }
-
-
 }
