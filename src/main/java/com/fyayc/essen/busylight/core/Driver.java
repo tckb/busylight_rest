@@ -1,6 +1,7 @@
 package com.fyayc.essen.busylight.core;
 
-import com.fyayc.essen.busylight.core.protocol.ProtocolConstants;
+import com.fyayc.essen.busylight.core.protocol.SpecConstants;
+import com.fyayc.essen.busylight.core.protocol.SpecConstants.StatusSpec;
 import com.fyayc.essen.busylight.core.protocol.ProtocolSpec;
 import com.tomgibara.bits.Bits;
 import java.io.Closeable;
@@ -26,7 +27,7 @@ public class Driver implements Closeable {
           Bits.toStore(hidDevice.getProductId()).toString(16),
           Bits.toStore(hidDevice.getVendorId()).toString(16));
 
-      if (hidDevice.getVendorId() == ProtocolConstants.SUPPORTED_VENDOR_ID
+      if (hidDevice.getVendorId() == SpecConstants.SUPPORTED_VENDOR_ID
           && isValidProductId(hidDevice.getProductId())) {
         physicalDevice = hidDevice;
         logger.info(
@@ -54,7 +55,7 @@ public class Driver implements Closeable {
   }
 
   private boolean isValidProductId(short productId) {
-    for (short supportedProductId : ProtocolConstants.SUPPORTED_PRODUCT_IDS) {
+    for (short supportedProductId : SpecConstants.SUPPORTED_PRODUCT_IDS) {
       if (productId == supportedProductId) return true;
     }
     return false;
@@ -79,6 +80,18 @@ public class Driver implements Closeable {
     logger.trace("Sending buffer: \n{} ", buffer.dumpHex());
     sendRawBuffer(buffer.toBytes());
   }
+
+  /**
+   * sends the given protocol data to the device
+   *
+   * @param buffer the buffer
+   */
+  public void send(StatusSpec buffer) {
+    logger.info("Sending {}",buffer);
+    send(buffer.protocol);
+  }
+
+
 
   @Override
   public void close() {

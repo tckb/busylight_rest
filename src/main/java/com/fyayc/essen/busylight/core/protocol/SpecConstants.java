@@ -6,9 +6,31 @@ import com.fyayc.essen.busylight.core.protocol.bytes.StepByte;
 import com.fyayc.essen.busylight.core.protocol.bytes.Time;
 
 /** Constants that can be used to build the procotocol */
-public final class ProtocolConstants {
+public final class SpecConstants {
   public static final short[] SUPPORTED_PRODUCT_IDS = new short[] {0x3BCA, 0x3BCB, 0x3BCC, 0x3BCD};
   public static final short SUPPORTED_VENDOR_ID = 0x27BB;
+
+  public static ProtocolSpec light(Light light) {
+    return ProtocolSpec.builder()
+        .addStep(
+            ProtocolStep.builder()
+                .light(light)
+                .lightDuration(Time.forDuration(10), Time.forDuration(0))
+                .command(Command.nextStep(0))
+                .build())
+        .build();
+  }
+
+  public static ProtocolSpec blink(Light light) {
+    return ProtocolSpec.builder()
+        .addStep(
+            ProtocolStep.builder()
+                .light(light)
+                .lightDuration(Time.forDuration(0.5), Time.forDuration(0.5))
+                .command(Command.nextStep(0))
+                .build())
+        .build();
+  }
 
   public enum Tones {
     OPENOFFICE(1),
@@ -30,20 +52,41 @@ public final class ProtocolConstants {
     }
   }
 
-  public enum LightStatus {
+  public enum Light {
     AWAY(Color.ofIntensity(89), Color.ofIntensity(100), Color.EMPTY),
     BUSY(Color.ofIntensity(100), Color.EMPTY, Color.EMPTY),
     FREE(Color.EMPTY, Color.ofIntensity(100), Color.EMPTY),
     DO_NOT_DISTURB(Color.ofIntensity(67), Color.ofIntensity(2), Color.ofIntensity(100)),
-    OFF(Color.EMPTY, Color.EMPTY, Color.EMPTY);
+    OFF(Color.EMPTY, Color.EMPTY, Color.EMPTY),
+    MAGENTA(
+        Color.ofPixel(java.awt.Color.MAGENTA.getRed()),
+        Color.ofPixel(java.awt.Color.MAGENTA.getGreen()),
+        Color.ofPixel(java.awt.Color.MAGENTA.getBlue())),
+    ORANGE(
+        Color.ofPixel(java.awt.Color.ORANGE.getRed()),
+        Color.ofPixel(java.awt.Color.ORANGE.getGreen()),
+        Color.ofPixel(java.awt.Color.ORANGE.getBlue())),
+    PINK(
+        Color.ofPixel(java.awt.Color.PINK.getRed()),
+        Color.ofPixel(java.awt.Color.PINK.getGreen()),
+        Color.ofPixel(java.awt.Color.PINK.getBlue())),
+    YELLOW(
+        Color.ofPixel(java.awt.Color.YELLOW.getRed()),
+        Color.ofPixel(java.awt.Color.YELLOW.getGreen()),
+        Color.ofPixel(java.awt.Color.YELLOW.getBlue())),
+    WHITE(
+        Color.ofPixel(java.awt.Color.WHITE.getRed()),
+        Color.ofPixel(java.awt.Color.WHITE.getGreen()),
+        Color.ofPixel(java.awt.Color.WHITE.getBlue()));
+
     final StepByte[] rgbBytes;
 
-    LightStatus(StepByte... rgb) {
+    Light(StepByte... rgb) {
       rgbBytes = rgb;
     }
   }
 
-  public enum Specs {
+  public enum StatusSpec {
     BUSY_IN_CALL(
         ProtocolSpec.builder()
             .addStep(
@@ -93,7 +136,7 @@ public final class ProtocolConstants {
         ProtocolSpec.builder()
             .addStep(
                 ProtocolStep.builder()
-                    .light(LightStatus.BUSY)
+                    .light(Light.BUSY)
                     .lightDuration(Time.forDuration(10), Time.forDuration(0))
                     .command(Command.nextStep(0))
                     .build())
@@ -102,7 +145,7 @@ public final class ProtocolConstants {
         ProtocolSpec.builder()
             .addStep(
                 ProtocolStep.builder()
-                    .light(LightStatus.DO_NOT_DISTURB)
+                    .light(Light.DO_NOT_DISTURB)
                     .lightDuration(Time.forDuration(10), Time.forDuration(0))
                     .command(Command.nextStep(0))
                     .build())
@@ -111,7 +154,7 @@ public final class ProtocolConstants {
         ProtocolSpec.builder()
             .addStep(
                 ProtocolStep.builder()
-                    .light(LightStatus.AWAY)
+                    .light(Light.AWAY)
                     .lightDuration(Time.forDuration(10), Time.forDuration(0))
                     .command(Command.nextStep(0))
                     .build())
@@ -120,7 +163,7 @@ public final class ProtocolConstants {
         ProtocolSpec.builder()
             .addStep(
                 ProtocolStep.builder()
-                    .light(LightStatus.FREE)
+                    .light(Light.FREE)
                     .lightDuration(Time.forDuration(10), Time.forDuration(0))
                     .command(Command.nextStep(0))
                     .build())
@@ -129,7 +172,7 @@ public final class ProtocolConstants {
         ProtocolSpec.builder()
             .addStep(
                 ProtocolStep.builder()
-                    .light(LightStatus.OFF)
+                    .light(Light.OFF)
                     .lightDuration(Time.forDuration(10), Time.forDuration(0))
                     .command(Command.nextStep(0))
                     .build())
@@ -141,7 +184,7 @@ public final class ProtocolConstants {
 
     public final ProtocolSpec protocol;
 
-    Specs(ProtocolSpec protocol) {
+    StatusSpec(ProtocolSpec protocol) {
       this.protocol = protocol;
     }
   }

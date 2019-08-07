@@ -1,6 +1,6 @@
 package com.fyayc.essen.busylight.core.protocol.bytes;
 
-import com.fyayc.essen.busylight.core.protocol.ProtocolConstants.Tones;
+import com.fyayc.essen.busylight.core.protocol.SpecConstants.Tones;
 
 public class Tone extends StepByte {
 
