@@ -5,7 +5,7 @@ public class Time extends StepByte {
   public static final double MIN_DURATION = 0;
 
   private Time() {
-    super("light");
+    super("lightDuration");
   }
 
   public static Time forDuration(double duration) {

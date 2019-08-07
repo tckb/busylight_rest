@@ -23,10 +23,8 @@ public class Command extends StepByte {
 
   public static Command keepAliveSignal(int timeout) {
     Command keepAliveByte = new Command("10000000", "keep_live");
-    if (timeout >= 0 && timeout < 15) {
-      BitStore stepStore = Bits.store(8);
-      stepStore.setBits(0, timeout, 4);
-      keepAliveByte.bitStore().or().withStore(stepStore);
+    if (timeout >= 0 && timeout <= 15) {
+      keepAliveByte.bitStore().setBits(0, timeout, 4);
     }
     return keepAliveByte;
   }

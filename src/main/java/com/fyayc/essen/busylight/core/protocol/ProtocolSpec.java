@@ -6,12 +6,12 @@ import com.tomgibara.bits.Bits;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class ProtocolV2Spec {
+public class ProtocolSpec {
   public static final int BYTE_LENGTH = 64;
   private static final int SPEC_STEPS = 8;
   private final ProtocolStep[] steps;
 
-  public ProtocolV2Spec(ProtocolStep[] steps) {
+  public ProtocolSpec(ProtocolStep[] steps) {
     this.steps = steps;
   }
 
@@ -21,17 +21,19 @@ public class ProtocolV2Spec {
 
   public byte[] toBytes() {
     byte[] protocolBytes = new byte[BYTE_LENGTH];
-    int ix=0;
+    int ix = 0;
     for (int currStep = 0; currStep < steps.length; currStep++) {
       byte[] currentStepBytes = steps[currStep].getBytes();
-      for (int currentStepByteIx = 0;currentStepByteIx < currentStepBytes.length;currentStepByteIx++) {
+      for (int currentStepByteIx = 0;
+          currentStepByteIx < currentStepBytes.length;
+          currentStepByteIx++) {
         protocolBytes[ix++] = currentStepBytes[currentStepByteIx];
       }
     }
     return protocolBytes;
   }
 
-  public String toHexString() {
+  public String dumpHex() {
     return Stream.of(steps).map(stp -> stp.toHexString() + "\n").reduce(" ", (a, b) -> a + b);
   }
 
@@ -40,7 +42,7 @@ public class ProtocolV2Spec {
     private ProtocolStep[] steps;
 
     public SpecBuilder() {
-      steps = new ProtocolStep[ProtocolV2Spec.SPEC_STEPS];
+      steps = new ProtocolStep[ProtocolSpec.SPEC_STEPS];
     }
 
     public SpecBuilder addStep(ProtocolStep step) {
@@ -59,7 +61,7 @@ public class ProtocolV2Spec {
       return this;
     }
 
-    public ProtocolV2Spec build() {
+    public ProtocolSpec build() {
       if (currentStep < 8) {
         for (int i = 0; i < steps.length; i++) {
           ProtocolStep step = steps[i];
@@ -73,14 +75,14 @@ public class ProtocolV2Spec {
       steps[7].setByte(checksumBytes[1], 6);
       steps[7].setByte(checksumBytes[0], 7);
 
-      return new ProtocolV2Spec(steps);
+      return new ProtocolSpec(steps);
     }
 
     private ProtocolStep generateMetaStep() {
       return ProtocolStep.builder()
           .add(0, StepByte.ofUnsignedInt("sensitivity", 0)) // 0-31
-          .add(1, StepByte.ofUnsignedInt("timeout", 31)) // 1-31s
-          .add(2, StepByte.ofUnsignedInt("trigger_time", 250)) // 1=250
+          .add(1, StepByte.ofUnsignedInt("timeout", 1)) // 1-31s
+          .add(2, StepByte.ofUnsignedInt("trigger_time", 255)) // 1=250
           .add(3, StepByte.ofUnsignedInt("no_use", 255)) // not used
           .add(4, StepByte.ofUnsignedInt("no_use", 255)) // not used
           .add(5, StepByte.ofUnsignedInt("no_use", 255)) // not used

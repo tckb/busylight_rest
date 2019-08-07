@@ -3,7 +3,7 @@ package com.fyayc.essen.busylight.core.protocol.bytes;
 public class Color extends StepByte {
 
   private Color() {
-    super("color");
+    super("light");
   }
 
   public static Color ofPixel(int pixelValue) {
