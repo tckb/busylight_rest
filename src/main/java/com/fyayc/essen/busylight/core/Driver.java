@@ -14,8 +14,10 @@ import org.hid4java.HidServices;
 /** the driver class for finding, connecting and communicating with the device */
 public class Driver implements Closeable {
   protected static final Logger logger = LogManager.getLogger(Driver.class);
+  protected static final int MAX_CONNECT_RETRIES = 5;
   private HidDevice physicalDevice;
   private KeepAliveThread keepAliveThread;
+  private boolean isRetriable = true;
 
   private Driver() {
     logger.trace("Searching for compatible  devices");
@@ -44,10 +46,11 @@ public class Driver implements Closeable {
       throw new UnsupportedOperationException(
           "Unable to open the device, is the device connected?");
     }
-    if (!physicalDevice.open()) {
+    if (!tryAndOpen()) {
       throw new UnsupportedOperationException(
           "Unable to open the device, is it already opened by some other process?");
     }
+
     keepAliveThread = new KeepAliveThread(10_000);
     keepAliveThread.start();
   }
@@ -70,8 +73,42 @@ public class Driver implements Closeable {
    * @param buffer the buffer
    */
   public void sendRawBuffer(byte[] buffer) {
-    physicalDevice.write(buffer, buffer.length, (byte) 0);
-    logger.trace("Sent buffer data of {} bytes", buffer.length);
+    if (tryAndOpen()) {
+      physicalDevice.write(buffer, buffer.length, (byte) 0);
+      logger.trace("Sent buffer data of {} bytes", buffer.length);
+    }
+  }
+
+  private boolean tryAndOpen() {
+    if (isOpen()) {
+      logger.trace("device is already opened");
+      return true;
+    } else {
+      logger.info("device connection lost, retrying to open");
+      if (isRetriable) {
+        try {
+          int tryIx = 0;
+          while (tryIx < MAX_CONNECT_RETRIES) {
+
+            if (!physicalDevice.open()) {
+              logger.trace("retrial# {}", tryIx);
+            } else {
+              logger.info("Device is now opened!");
+              return true;
+            }
+            tryIx++;
+            Thread.sleep(2000);
+          }
+        } catch (InterruptedException e) {
+          logger.error("Unable to sleep, interrupted", e);
+        }
+        logger.warn("Unable to open the device");
+        return false;
+      } else {
+        logger.info("Can not retry, isRetriable = false");
+        return false;
+      }
+    }
   }
 
   /**
