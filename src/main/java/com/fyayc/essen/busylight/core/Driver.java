@@ -2,7 +2,7 @@ package com.fyayc.essen.busylight.core;
 
 import com.fyayc.essen.busylight.core.protocol.ProtocolSpec;
 import com.fyayc.essen.busylight.core.protocol.SpecConstants;
-import com.fyayc.essen.busylight.core.protocol.SpecConstants.Specs;
+import com.fyayc.essen.busylight.core.protocol.SpecConstants.StandardSpecs;
 import com.tomgibara.bits.Bits;
 import java.io.Closeable;
 import org.apache.logging.log4j.LogManager;
@@ -91,7 +91,7 @@ public class Driver implements Closeable {
           while (tryIx < MAX_CONNECT_RETRIES) {
 
             if (!physicalDevice.open()) {
-              logger.trace("retrial# {}", tryIx);
+              logger.trace("retry# {}", tryIx);
             } else {
               logger.info("Device is now opened!");
               return true;
@@ -126,7 +126,7 @@ public class Driver implements Closeable {
    *
    * @param buffer the buffer
    */
-  public void send(Specs buffer) {
+  public void send(StandardSpecs buffer) {
     logger.info("Sending {}", buffer);
     send(buffer.protocol);
   }
@@ -167,7 +167,7 @@ public class Driver implements Closeable {
     public void run() {
       while (!interrupt) {
         try {
-          send(Specs.KEEP_ALIVE);
+          send(StandardSpecs.KEEP_ALIVE);
           Thread.sleep(keepAliveFreq);
         } catch (InterruptedException e) {
           logger.error("Busylight keep-alive thread interrupted ", e);

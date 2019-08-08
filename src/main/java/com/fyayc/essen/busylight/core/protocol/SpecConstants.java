@@ -4,6 +4,7 @@ import com.fyayc.essen.busylight.core.protocol.bytes.Color;
 import com.fyayc.essen.busylight.core.protocol.bytes.Command;
 import com.fyayc.essen.busylight.core.protocol.bytes.StepByte;
 import com.fyayc.essen.busylight.core.protocol.bytes.Time;
+import com.fyayc.essen.busylight.core.protocol.bytes.Tone;
 
 /** Constants that can be used to build the procotocol */
 public final class SpecConstants {
@@ -16,6 +17,19 @@ public final class SpecConstants {
             ProtocolStep.builder()
                 .light(light)
                 .lightDuration(Time.forDuration(10), Time.forDuration(0))
+                .tone(Tone.noSettings())
+                .command(Command.nextStep(0))
+                .build())
+        .build();
+  }
+
+  public static ProtocolSpec lightSpec(java.awt.Color color) {
+    return ProtocolSpec.builder()
+        .addStep(
+            ProtocolStep.builder()
+                .light(Color.ofPixel(color.getRed()),Color.ofPixel(color.getGreen()),Color.ofPixel(color.getBlue()))
+                .lightDuration(Time.forDuration(10), Time.forDuration(0))
+                .tone(Tone.noSettings())
                 .command(Command.nextStep(0))
                 .build())
         .build();
@@ -27,9 +41,32 @@ public final class SpecConstants {
             ProtocolStep.builder()
                 .light(light)
                 .lightDuration(Time.forDuration(0.5), Time.forDuration(0.5))
+                .tone(Tone.noSettings())
                 .command(Command.nextStep(0))
                 .build())
         .build();
+  }
+
+  public static ProtocolSpec blinkSpec(java.awt.Color color){
+    return ProtocolSpec.builder()
+        .addStep(
+            ProtocolStep.builder()
+                .light(Color.ofPixel(color.getRed()),Color.ofPixel(color.getGreen()),Color.ofPixel(color.getBlue()))
+                .lightDuration(Time.forDuration(0.5), Time.forDuration(0.5))
+                .tone(Tone.noSettings())
+                .command(Command.nextStep(0))
+                .build())
+        .build();
+  }
+
+  public static ProtocolSpec toneSpec(Tone tone) {
+    return ProtocolSpec.builder()
+        .addStep(ProtocolStep.builder().tone(tone).command(Command.nextStep(0)).build())
+        .build();
+  }
+
+  public static ProtocolSpec pulseSpec(Object light) {
+    throw new UnsupportedOperationException("Custom pulse is not supported yet.");
   }
 
   public enum Tones {
@@ -77,8 +114,8 @@ public final class SpecConstants {
     WHITE(
         Color.ofPixel(java.awt.Color.WHITE.getRed()),
         Color.ofPixel(java.awt.Color.WHITE.getGreen()),
-        Color.ofPixel(java.awt.Color.WHITE.getBlue()));
-
+        Color.ofPixel(java.awt.Color.WHITE.getBlue())),
+    CUSTOM();
     final StepByte[] rgbBytes;
 
     Light(StepByte... rgb) {
@@ -86,7 +123,7 @@ public final class SpecConstants {
     }
   }
 
-  public enum Specs {
+  public enum StandardSpecs {
     BUSY_IN_CALL(
         ProtocolSpec.builder()
             .addStep(
@@ -174,6 +211,7 @@ public final class SpecConstants {
                 ProtocolStep.builder()
                     .light(Light.OFF)
                     .lightDuration(Time.forDuration(10), Time.forDuration(0))
+                    .tone(Tone.TURN_OFF_TONE)
                     .command(Command.nextStep(0))
                     .build())
             .build()),
@@ -184,7 +222,7 @@ public final class SpecConstants {
 
     public final ProtocolSpec protocol;
 
-    Specs(ProtocolSpec protocol) {
+    StandardSpecs(ProtocolSpec protocol) {
       this.protocol = protocol;
     }
   }

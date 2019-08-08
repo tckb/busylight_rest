@@ -5,7 +5,7 @@ import com.fyayc.essen.busylight.core.protocol.SpecConstants.Tones;
 public class Tone extends StepByte {
 
   private static final int MAX_VOLUME = 7;
-  public static final Tone TURN_OFF_TONE = Tone.forSettings(0, 0);
+  public static final Tone TURN_OFF_TONE = Tone.forTone(0, 0);
 
   private Tone() {
     super("tone");
@@ -17,7 +17,7 @@ public class Tone extends StepByte {
     return toneByte;
   }
 
-  public static Tone forSettings(int toneId, int volume) {
+  public static Tone forTone(int toneId, int volume) {
     if (volume < 0 || volume > MAX_VOLUME) {
       throw new UnsupportedOperationException("expecting times between 0 and 7");
     }
@@ -31,7 +31,7 @@ public class Tone extends StepByte {
     return toneByte;
   }
 
-  public static Tone forSettings(Tones tone, int volume) {
-    return forSettings(tone.value, volume);
+  public static Tone forTone(Tones tone, int volume) {
+    return forTone(tone.value, volume);
   }
 }
