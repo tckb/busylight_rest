@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 public class ProtocolSpec {
   public static final int BYTE_LENGTH = 64;
   protected static final Logger logger = LogManager.getLogger(ProtocolSpec.class);
-  private static final int SPEC_STEPS = 8;
+  private static final int MAX_STEPS = 8;
   private final ProtocolStep[] steps;
 
   public ProtocolSpec(ProtocolStep[] steps) {
@@ -49,11 +49,17 @@ public class ProtocolSpec {
     private ProtocolStep[] steps;
 
     public SpecBuilder() {
-      steps = new ProtocolStep[ProtocolSpec.SPEC_STEPS];
+      steps = new ProtocolStep[ProtocolSpec.MAX_STEPS];
+      for (int i = 0; i < steps.length; i++) {
+        ProtocolStep step = steps[i];
+        if (step == null) {
+          steps[i] = ProtocolStep.empty();
+        }
+      }
     }
 
     public SpecBuilder addStep(ProtocolStep step) {
-      if (currentStep > 7) {
+      if (currentStep > ProtocolSpec.MAX_STEPS - 1) {
         throw new IllegalArgumentException("max steps reached, currentstep: " + currentStep);
       }
       steps[currentStep++] = step;
@@ -69,14 +75,6 @@ public class ProtocolSpec {
     }
 
     public ProtocolSpec build() {
-      if (currentStep < 8) {
-        for (int i = 0; i < steps.length; i++) {
-          ProtocolStep step = steps[i];
-          if (step == null) {
-            steps[i] = ProtocolStep.empty();
-          }
-        }
-      }
       steps[7] = generateMetaStep();
       StepByte[] checksumBytes = calculateChecksum(steps);
       steps[7].setByte(checksumBytes[1], 6);
