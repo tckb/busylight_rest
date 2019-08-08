@@ -11,6 +11,7 @@ import java.util.Arrays;
 public final class SpecConstants {
   public static final short[] SUPPORTED_PRODUCT_IDS = new short[] {0x3BCA, 0x3BCB, 0x3BCC, 0x3BCD};
   public static final short SUPPORTED_VENDOR_ID = 0x27BB;
+  private static double PULSE_GAP_TIME = 0.2;
 
   public static ProtocolSpec lightSpec(Light light) {
     return ProtocolSpec.builder()
@@ -85,43 +86,43 @@ public final class SpecConstants {
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[1][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
                 .command(Command.nextStep(1))
                 .build())
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[2][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
                 .command(Command.nextStep(2))
                 .build())
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[3][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
                 .command(Command.nextStep(3))
                 .build())
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[4][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(0.8), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME * 4), Time.forDuration(0))
                 .command(Command.nextStep(4))
                 .build())
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[3][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
                 .command(Command.nextStep(5))
                 .build())
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[2][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
                 .command(Command.nextStep(6))
                 .build())
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[1][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
                 .command(Command.nextStep(0))
                 .build())
         .build();
@@ -208,43 +209,43 @@ public final class SpecConstants {
             .addStep(
                 ProtocolStep.builder()
                     .light(Color.ofIntensity(14), Color.EMPTY, Color.EMPTY)
-                    .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                    .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
                     .command(Command.nextStep(1))
                     .build())
             .addStep(
                 ProtocolStep.builder()
                     .light(Color.ofIntensity(42), Color.EMPTY, Color.EMPTY)
-                    .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                    .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
                     .command(Command.nextStep(2))
                     .build())
             .addStep(
                 ProtocolStep.builder()
                     .light(Color.ofIntensity(72), Color.EMPTY, Color.EMPTY)
-                    .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                    .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
                     .command(Command.nextStep(3))
                     .build())
             .addStep(
                 ProtocolStep.builder()
                     .light(Color.ofIntensity(100), Color.EMPTY, Color.EMPTY)
-                    .lightDuration(Time.forDuration(0.8), Time.forDuration(0))
+                    .lightDuration(Time.forDuration(PULSE_GAP_TIME * 4), Time.forDuration(0))
                     .command(Command.nextStep(4))
                     .build())
             .addStep(
                 ProtocolStep.builder()
                     .light(Color.ofIntensity(72), Color.EMPTY, Color.EMPTY)
-                    .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                    .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
                     .command(Command.nextStep(5))
                     .build())
             .addStep(
                 ProtocolStep.builder()
                     .light(Color.ofIntensity(42), Color.EMPTY, Color.EMPTY)
-                    .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                    .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
                     .command(Command.nextStep(6))
                     .build())
             .addStep(
                 ProtocolStep.builder()
                     .light(Color.ofIntensity(20), Color.EMPTY, Color.EMPTY)
-                    .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                    .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
                     .command(Command.nextStep(0))
                     .build())
             .build()),
