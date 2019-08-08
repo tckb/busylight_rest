@@ -5,6 +5,7 @@ import com.fyayc.essen.busylight.core.protocol.bytes.Command;
 import com.fyayc.essen.busylight.core.protocol.bytes.StepByte;
 import com.fyayc.essen.busylight.core.protocol.bytes.Time;
 import com.fyayc.essen.busylight.core.protocol.bytes.Tone;
+import java.util.Arrays;
 
 /** Constants that can be used to build the procotocol */
 public final class SpecConstants {
@@ -27,7 +28,10 @@ public final class SpecConstants {
     return ProtocolSpec.builder()
         .addStep(
             ProtocolStep.builder()
-                .light(Color.ofPixel(color.getRed()),Color.ofPixel(color.getGreen()),Color.ofPixel(color.getBlue()))
+                .light(
+                    Color.ofPixel(color.getRed()),
+                    Color.ofPixel(color.getGreen()),
+                    Color.ofPixel(color.getBlue()))
                 .lightDuration(Time.forDuration(10), Time.forDuration(0))
                 .tone(Tone.noSettings())
                 .command(Command.nextStep(0))
@@ -47,11 +51,14 @@ public final class SpecConstants {
         .build();
   }
 
-  public static ProtocolSpec blinkSpec(java.awt.Color color){
+  public static ProtocolSpec blinkSpec(java.awt.Color color) {
     return ProtocolSpec.builder()
         .addStep(
             ProtocolStep.builder()
-                .light(Color.ofPixel(color.getRed()),Color.ofPixel(color.getGreen()),Color.ofPixel(color.getBlue()))
+                .light(
+                    Color.ofPixel(color.getRed()),
+                    Color.ofPixel(color.getGreen()),
+                    Color.ofPixel(color.getBlue()))
                 .lightDuration(Time.forDuration(0.5), Time.forDuration(0.5))
                 .tone(Tone.noSettings())
                 .command(Command.nextStep(0))
@@ -65,8 +72,80 @@ public final class SpecConstants {
         .build();
   }
 
-  public static ProtocolSpec pulseSpec(Object light) {
-    throw new UnsupportedOperationException("Custom pulse is not supported yet.");
+  public static ProtocolSpec pulseSpec(Light lightt) {
+    Color[][] interpolatedColors =
+        interpolate(
+            new int[] {0, 0, 0},
+            new int[] {
+              lightt.rgbBytes[0].toInt(), lightt.rgbBytes[1].toInt(), lightt.rgbBytes[2].toInt()
+            },
+            5);
+
+    return ProtocolSpec.builder()
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[1][0], interpolatedColors[1][1], interpolatedColors[1][2])
+                .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                .command(Command.nextStep(1))
+                .build())
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[2][0], interpolatedColors[1][1], interpolatedColors[1][2])
+                .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                .command(Command.nextStep(2))
+                .build())
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[3][0], interpolatedColors[1][1], interpolatedColors[1][2])
+                .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                .command(Command.nextStep(3))
+                .build())
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[4][0], interpolatedColors[1][1], interpolatedColors[1][2])
+                .lightDuration(Time.forDuration(0.8), Time.forDuration(0))
+                .command(Command.nextStep(4))
+                .build())
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[3][0], interpolatedColors[1][1], interpolatedColors[1][2])
+                .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                .command(Command.nextStep(5))
+                .build())
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[2][0], interpolatedColors[1][1], interpolatedColors[1][2])
+                .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                .command(Command.nextStep(6))
+                .build())
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[1][0], interpolatedColors[1][1], interpolatedColors[1][2])
+                .lightDuration(Time.forDuration(0.2), Time.forDuration(0))
+                .command(Command.nextStep(0))
+                .build())
+        .build();
+  }
+
+  private static Color[][] interpolate(int[] fromColor, int[] toColor, int steps) {
+    Color[][] colors = new Color[steps][3];
+    double stepFactor = 1.0 / (steps - 1);
+    for (int step = 0; step < steps; step++) {
+      Color[] interpolatedColor = interpolate(fromColor, toColor, stepFactor * step);
+      System.arraycopy(interpolatedColor, 0, colors[step], 0, interpolatedColor.length);
+    }
+    return colors;
+  }
+
+  private static Color[] interpolate(int[] fromColor, int[] toColor, double factor) {
+    int[] resRgb = Arrays.copyOf(fromColor, fromColor.length);
+
+    for (int i = 0; i < 3; i++) {
+      resRgb[i] = Math.toIntExact(Math.round(resRgb[i] + factor * (toColor[i] - fromColor[i])));
+    }
+    return new Color[] {
+      Color.ofPixel(resRgb[0]), Color.ofPixel(resRgb[1]), Color.ofPixel(resRgb[2])
+    };
   }
 
   public enum Tones {
