@@ -11,7 +11,7 @@ import java.util.Arrays;
 public final class SpecConstants {
   public static final short[] SUPPORTED_PRODUCT_IDS = new short[] {0x3BCA, 0x3BCB, 0x3BCC, 0x3BCD};
   public static final short SUPPORTED_VENDOR_ID = 0x27BB;
-  private static double PULSE_GAP_TIME = 0.2;
+  private static double PULSE_GAP_TIME = 0.1;
 
   public static ProtocolSpec lightSpec(Light light) {
     return ProtocolSpec.builder()
@@ -73,12 +73,12 @@ public final class SpecConstants {
         .build();
   }
 
-  public static ProtocolSpec pulseSpec(Light lightt) {
+  public static ProtocolSpec pulseSpec(Light light) {
     Color[][] interpolatedColors =
         interpolate(
             new int[] {0, 0, 0},
             new int[] {
-              lightt.rgbBytes[0].toInt(), lightt.rgbBytes[1].toInt(), lightt.rgbBytes[2].toInt()
+              light.rgbBytes[0].toInt(), light.rgbBytes[1].toInt(), light.rgbBytes[2].toInt()
             },
             5);
 
@@ -92,13 +92,13 @@ public final class SpecConstants {
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[2][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
                 .command(Command.nextStep(2))
                 .build())
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[3][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
                 .command(Command.nextStep(3))
                 .build())
         .addStep(
@@ -110,13 +110,13 @@ public final class SpecConstants {
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[3][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
                 .command(Command.nextStep(5))
                 .build())
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[2][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
                 .command(Command.nextStep(6))
                 .build())
         .addStep(
@@ -147,6 +147,57 @@ public final class SpecConstants {
     return new Color[] {
       Color.ofPixel(resRgb[0]), Color.ofPixel(resRgb[1]), Color.ofPixel(resRgb[2])
     };
+  }
+
+  public static ProtocolSpec pulseSpec(java.awt.Color color) {
+    Color[][] interpolatedColors =
+        interpolate(
+            new int[] {0, 0, 0}, new int[] {color.getRed(), color.getGreen(), color.getBlue()}, 5);
+
+    return ProtocolSpec.builder()
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[1][0], interpolatedColors[1][1], interpolatedColors[1][2])
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
+                .command(Command.nextStep(1))
+                .build())
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[2][0], interpolatedColors[2][1], interpolatedColors[2][2])
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
+                .command(Command.nextStep(2))
+                .build())
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[3][0], interpolatedColors[3][1], interpolatedColors[3][2])
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
+                .command(Command.nextStep(3))
+                .build())
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[4][0], interpolatedColors[4][1], interpolatedColors[4][2])
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME * 4), Time.forDuration(0))
+                .command(Command.nextStep(4))
+                .build())
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[3][0], interpolatedColors[3][1], interpolatedColors[3][2])
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
+                .command(Command.nextStep(5))
+                .build())
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[2][0], interpolatedColors[2][1], interpolatedColors[2][2])
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
+                .command(Command.nextStep(6))
+                .build())
+        .addStep(
+            ProtocolStep.builder()
+                .light(interpolatedColors[1][0], interpolatedColors[1][1], interpolatedColors[1][2])
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME), Time.forDuration(0))
+                .command(Command.nextStep(0))
+                .build())
+        .build();
   }
 
   public enum Tones {
