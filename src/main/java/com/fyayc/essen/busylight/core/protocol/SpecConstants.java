@@ -92,13 +92,13 @@ public final class SpecConstants {
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[2][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME * 2), Time.forDuration(0))
                 .command(Command.nextStep(2))
                 .build())
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[3][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME * 2), Time.forDuration(0))
                 .command(Command.nextStep(3))
                 .build())
         .addStep(
@@ -110,13 +110,13 @@ public final class SpecConstants {
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[3][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME * 2), Time.forDuration(0))
                 .command(Command.nextStep(5))
                 .build())
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[2][0], interpolatedColors[1][1], interpolatedColors[1][2])
-                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME * 2), Time.forDuration(0))
                 .command(Command.nextStep(6))
                 .build())
         .addStep(
@@ -164,13 +164,13 @@ public final class SpecConstants {
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[2][0], interpolatedColors[2][1], interpolatedColors[2][2])
-                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME * 2), Time.forDuration(0))
                 .command(Command.nextStep(2))
                 .build())
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[3][0], interpolatedColors[3][1], interpolatedColors[3][2])
-                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME * 2), Time.forDuration(0))
                 .command(Command.nextStep(3))
                 .build())
         .addStep(
@@ -182,13 +182,13 @@ public final class SpecConstants {
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[3][0], interpolatedColors[3][1], interpolatedColors[3][2])
-                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME * 2), Time.forDuration(0))
                 .command(Command.nextStep(5))
                 .build())
         .addStep(
             ProtocolStep.builder()
                 .light(interpolatedColors[2][0], interpolatedColors[2][1], interpolatedColors[2][2])
-                .lightDuration(Time.forDuration(PULSE_GAP_TIME*2), Time.forDuration(0))
+                .lightDuration(Time.forDuration(PULSE_GAP_TIME * 2), Time.forDuration(0))
                 .command(Command.nextStep(6))
                 .build())
         .addStep(
@@ -333,6 +333,21 @@ public final class SpecConstants {
                 ProtocolStep.builder()
                     .light(Light.FREE)
                     .lightDuration(Time.forDuration(10), Time.forDuration(0))
+                    .command(Command.nextStep(0))
+                    .build())
+            .build()),
+    NOTIFY_IM(
+        ProtocolSpec.builder()
+            .addStep(
+                ProtocolStep.builder()
+                    .light(Color.EMPTY, Color.EMPTY, Color.ofIntensity(80))
+                    .lightDuration(Time.forDuration(0.5), Time.forDuration(0.5))
+                    .tone(Tone.forTone(Tones.OPENOFFICE, 4))
+                    .command(Command.nextStep(1))
+                    .build())
+            .addStep(
+                ProtocolStep.builder()
+                    .tone(Tone.forTone(Tones.IM_1, 7))
                     .command(Command.nextStep(0))
                     .build())
             .build()),
