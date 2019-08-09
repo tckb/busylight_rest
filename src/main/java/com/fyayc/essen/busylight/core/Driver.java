@@ -127,7 +127,7 @@ public class Driver implements Closeable {
    * @param buffer the buffer
    */
   public void send(StandardSpecs buffer) {
-    logger.info("Sending {}", buffer);
+    logger.debug("Sending {}", buffer);
     send(buffer.protocol);
   }
 
