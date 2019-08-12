@@ -91,7 +91,7 @@ public class Driver implements Closeable {
           while (tryIx < MAX_CONNECT_RETRIES) {
 
             if (!physicalDevice.open()) {
-              logger.trace("retry# {}", tryIx);
+              logger.warn("retry# {}", tryIx);
             } else {
               logger.info("Device is now opened!");
               return true;
@@ -114,11 +114,11 @@ public class Driver implements Closeable {
   /**
    * sends the given protocol data to the device
    *
-   * @param buffer the buffer
+   * @param protocol the buffer
    */
-  public void send(ProtocolSpec buffer) {
-    logger.trace("Sending buffer: \n{} ", buffer.dumpHex());
-    sendRawBuffer(buffer.toBytes());
+  public void send(ProtocolSpec protocol) {
+    logger.trace("Sending buffer: \n{} ", protocol.dumpHex());
+    sendRawBuffer(protocol.toBytes());
   }
 
   /**

@@ -60,10 +60,6 @@ public class ProtocolStep {
     return Stream.of(stepBytes).map(b -> b.hex() + " ").reduce(" ", (a, b) -> a + b);
   }
 
-  public byte[] toBytes() {
-    return new byte[0];
-  }
-
   public static class StepBuilder {
     private StepByte[] steps;
 

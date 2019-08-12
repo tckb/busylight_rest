@@ -2,6 +2,7 @@ package com.fyayc.essen.busylight.core.protocol;
 
 import com.fyayc.essen.busylight.core.protocol.bytes.Color;
 import com.fyayc.essen.busylight.core.protocol.bytes.Command;
+import com.fyayc.essen.busylight.core.protocol.bytes.Repeat;
 import com.fyayc.essen.busylight.core.protocol.bytes.StepByte;
 import com.fyayc.essen.busylight.core.protocol.bytes.Time;
 import com.fyayc.essen.busylight.core.protocol.bytes.Tone;
@@ -349,6 +350,30 @@ public final class SpecConstants {
                 ProtocolStep.builder()
                     .tone(Tone.forTone(Tones.IM_1, 7))
                     .command(Command.nextStep(0))
+                    .build())
+            .build()),
+    SOS(
+        ProtocolSpec.builder()
+            .addStep(
+                ProtocolStep.builder()
+                    .light(Color.ofIntensity(80), Color.EMPTY, Color.EMPTY)
+                    .lightDuration(Time.forDuration(0.3), Time.forDuration(0.3))
+                    .command(Command.nextStep(1))
+                    .repeat(Repeat.ofTimes(3))
+                    .build())
+            .addStep(
+                ProtocolStep.builder()
+                    .light(Color.ofIntensity(80), Color.EMPTY, Color.EMPTY)
+                    .lightDuration(Time.forDuration(0.6), Time.forDuration(0.6))
+                    .command(Command.nextStep(2))
+                    .repeat(Repeat.ofTimes(3))
+                    .build())
+            .addStep(
+                ProtocolStep.builder()
+                    .light(Color.ofIntensity(80), Color.EMPTY, Color.EMPTY)
+                    .lightDuration(Time.forDuration(0.3), Time.forDuration(0.3))
+                    .command(Command.nextStep(0))
+                    .repeat(Repeat.ofTimes(0))
                     .build())
             .build()),
     OFF(
