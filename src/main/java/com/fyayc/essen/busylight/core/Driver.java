@@ -5,17 +5,20 @@ import com.fyayc.essen.busylight.core.protocol.SpecConstants;
 import com.fyayc.essen.busylight.core.protocol.SpecConstants.StandardSpecs;
 import com.tomgibara.bits.Bits;
 import java.io.Closeable;
+import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hid4java.HidDevice;
 import org.hid4java.HidManager;
 import org.hid4java.HidServices;
+import org.hid4java.HidServicesListener;
+import org.hid4java.event.HidServicesEvent;
 
 /** the driver class for finding, connecting and communicating with the device */
 public class Driver implements Closeable {
   protected static final Logger logger = LogManager.getLogger(Driver.class);
   protected static final int MAX_CONNECT_RETRIES = 5;
-  private HidDevice physicalDevice;
+  private HidDevice physicalDevice = null;
   private KeepAliveThread keepAliveThread;
   private boolean isRetriable = true;
 
@@ -30,8 +33,7 @@ public class Driver implements Closeable {
           Bits.toStore(hidDevice.getProductId()).toString(16),
           Bits.toStore(hidDevice.getVendorId()).toString(16));
 
-      if (hidDevice.getVendorId() == SpecConstants.SUPPORTED_VENDOR_ID
-          && isValidProductId(hidDevice.getProductId())) {
+      if (isCompatibleDevice(hidDevice)) {
         physicalDevice = hidDevice;
         logger.info(
             "Found a compatible device {}: 0x{} / 0x{}",
@@ -41,7 +43,6 @@ public class Driver implements Closeable {
         break;
       }
     }
-    hidServices.shutdown();
     if (physicalDevice == null) {
       throw new UnsupportedOperationException(
           "Unable to open the device, is the device connected?");
@@ -50,9 +51,49 @@ public class Driver implements Closeable {
       throw new UnsupportedOperationException(
           "Unable to open the device, is it already opened by some other process?");
     }
-
     keepAliveThread = new KeepAliveThread(10_000);
     keepAliveThread.start();
+    hidServices.addHidServicesListener(
+        new HidServicesListener() {
+          @Override
+          public void hidDeviceAttached(HidServicesEvent event) {
+            logger.trace("New USB device attached event: " + event.toString());
+            if (physicalDevice == null) {
+              if (isCompatibleDevice(event.getHidDevice())) {
+                logger.info("New Compatible device found!");
+                physicalDevice = event.getHidDevice();
+              }
+            }
+          }
+
+          @Override
+          public void hidDeviceDetached(HidServicesEvent event) {
+            logger.info("Usb device detached detected!");
+            if (isCompatibleDevice(event.getHidDevice())
+                && isPreviouslyAttached(event.getHidDevice())) {
+              logger.warn("Connected compatible device detached");
+              try {
+                physicalDevice.close();
+              } catch (Throwable ignored) {
+              }
+              physicalDevice = null;
+            }
+          }
+
+          @Override
+          public void hidFailure(HidServicesEvent event) {
+            logger.info("Usb device failure detected!");
+            if (isCompatibleDevice(event.getHidDevice())
+                && isPreviouslyAttached(event.getHidDevice())) {
+              logger.warn("Connected compatible device detached");
+              try {
+                physicalDevice.close();
+              } catch (Throwable ignored) {
+              }
+              physicalDevice = null;
+            }
+          }
+        });
   }
 
   public static Driver tryAndAcquire() {
@@ -65,6 +106,16 @@ public class Driver implements Closeable {
       if (productId == supportedProductId) return true;
     }
     return false;
+  }
+
+  private boolean isCompatibleDevice(HidDevice someDevice) {
+    return someDevice != null
+        && someDevice.getVendorId() == SpecConstants.SUPPORTED_VENDOR_ID
+        && isValidProductId(someDevice.getProductId());
+  }
+
+  private boolean isPreviouslyAttached(HidDevice someDevice) {
+    return physicalDevice != null && Objects.equals(someDevice, physicalDevice);
   }
 
   /**
@@ -90,12 +141,17 @@ public class Driver implements Closeable {
           int tryIx = 0;
           while (tryIx < MAX_CONNECT_RETRIES) {
 
-            if (!physicalDevice.open()) {
-              logger.warn("retry# {}", tryIx);
+            if (physicalDevice == null) {
+              logger.warn("Connected device is lost... may be this was detached.");
             } else {
-              logger.info("Device is now opened!");
-              return true;
+              if (!physicalDevice.open()) {
+                logger.warn("retry# {}", tryIx);
+              } else {
+                logger.info("Device is now opened!");
+                return true;
+              }
             }
+
             tryIx++;
             Thread.sleep(2000);
           }
@@ -144,7 +200,7 @@ public class Driver implements Closeable {
    * @return true - if its still open
    */
   public boolean isOpen() {
-    return physicalDevice.isOpen();
+    return physicalDevice != null && physicalDevice.isOpen();
   }
 
   private static class DriverHelper {

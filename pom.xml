@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.fyayc.essen</groupId>
   <artifactId>busylight-core</artifactId>
-  <version>0.1</version>
+  <version>1.0</version>
   <packaging>jar</packaging>
   <name>Busylight Driver</name>
   <description>library for interacting with busylight</description>
