@@ -60,6 +60,43 @@ try (Driver driver = Driver.tryAndAcquire()) {
 }
 ```
 #### Custom spec
-```java
+For eg, consider the following specification from the protocol: 
 
+* Step 0: Blink blue (20% intensity) 3 times (DC:0.5s on 0.5s off), turn off audio; then jump to step 1
+* Step 1: Blink red (80% intensity) 5 times (DC:1.5s on 0.5s off), audio setting ignored; then jump to step 2 
+* Step 2: Show green (100% intensity) steady on for 10 seconds and play ringtone #4 at volume level 3;
+then jump to step 0
+
+
+this can be defined as follows: 
+```java
+try (Driver driver = Driver.tryAndAcquire()) {
+      ProtocolSpec spec =
+          ProtocolSpec.builder()
+              .addStep(
+                  ProtocolStep.builder()
+                      .light(Color.EMPTY, Color.EMPTY, Color.ofIntensity(20))
+                      .lightDuration(Time.forDuration(0.5), Time.forDuration(0.5))
+                      .repeat(Repeat.ofTimes(3))
+                      .tone(Tone.TURN_OFF_TONE)
+                      .command(Command.nextStep(1))
+                      .build())
+              .addStep(
+                  ProtocolStep.builder()
+                      .light(Color.ofIntensity(80), Color.EMPTY, Color.EMPTY)
+                      .lightDuration(Time.forDuration(1.5), Time.forDuration(0.5))
+                      .repeat(Repeat.ofTimes(5))
+                      .tone(Tone.noSettings())
+                      .command(Command.nextStep(2))
+                      .build())
+              .addStep(
+                  ProtocolStep.builder()
+                      .light(Color.EMPTY, Color.ofIntensity(80), Color.EMPTY)
+                      .lightDuration(Time.forDuration(10), Time.forDuration(0))
+                      .tone(Tone.forTone(4,3))
+                      .command(Command.nextStep(0))
+                      .build())
+              .build();
+      driver.send(spec);
+    }
 ```
