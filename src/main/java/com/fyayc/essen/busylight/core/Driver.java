@@ -27,18 +27,17 @@ public class Driver implements Closeable {
   private Driver() {
     logger.trace("Searching for compatible  devices");
     HidServices hidServices = HidManager.getHidServices();
-    hidServices.getAttachedHidDevices().stream()
+    physicalDevice = hidServices.getAttachedHidDevices().stream()
         .filter(this::isCompatibleDevice)
+        .peek(hidDevice -> {
+          logger.info(
+              "Found a compatible device {}: 0x{} / 0x{}",
+              hidDevice.getProduct(),
+              Bits.toStore(hidDevice.getProductId()).toString(16),
+              Bits.toStore(hidDevice.getVendorId()).toString(16));
+        })
         .findFirst()
-        .ifPresent(
-            hidDevice -> {
-              physicalDevice = hidDevice;
-              logger.info(
-                  "Found a compatible device {}: 0x{} / 0x{}",
-                  hidDevice.getProduct(),
-                  Bits.toStore(hidDevice.getProductId()).toString(16),
-                  Bits.toStore(hidDevice.getVendorId()).toString(16));
-            });
+        .orElse(null);
 
     if (physicalDevice == null) {
       throw new UnsupportedOperationException(
