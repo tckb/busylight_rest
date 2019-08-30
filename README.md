@@ -1,5 +1,6 @@
 # Busylight Driver
-The project `busylight-core` is a complete and comprehensive driver implementation of the protocol specification of Busylight for revision 2.2.  
+The project `busylight-core` is a complete and comprehensive driver implementation of the protocol specification of Busylight for revision 2.2. The purpose of this module/project is to only act as a driver for communicating with the busylight device. Most common interactions are already covered in the "high-level" api. For custom specification, you can use the `ProtocolSpec#builder`    
+
 The implementation is structured logically into the following ---
 
 ## Low-level Api:
@@ -28,8 +29,9 @@ The `Driver` class implements the logic to send the raw byte buffer data to the 
 Additionally, the driver is responsible for sending out this so-called **_Keep-Alive**_ command signal to the device (--to keep the previous data signal alive) periodically. This is means the scenario of attachment, followed by a detachment is handled.
 
 
-## Sample Usage 
+## Usage 
 
+#### Pre-defined specs 
 ```java
 try (Driver driver = Driver.tryAndAcquire()) {
     System.out.println("****** PLAYING MUSIC *******");
@@ -56,4 +58,8 @@ try (Driver driver = Driver.tryAndAcquire()) {
     }
     driver.send(StandardSpecs.OFF);
 }
+```
+#### Custom spec
+```java
+
 ```
