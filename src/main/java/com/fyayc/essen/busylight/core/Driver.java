@@ -27,17 +27,18 @@ public class Driver implements Closeable {
   private Driver() {
     logger.trace("Searching for compatible  devices");
     HidServices hidServices = HidManager.getHidServices();
-    hidServices.getAttachedHidDevices()
-        .stream()
+    hidServices.getAttachedHidDevices().stream()
         .filter(this::isCompatibleDevice)
-        .findFirst().ifPresent(hidDevice -> {
-      physicalDevice = hidDevice;
-      logger.info(
-          "Found a compatible device {}: 0x{} / 0x{}",
-          hidDevice.getProduct(),
-          Bits.toStore(hidDevice.getProductId()).toString(16),
-          Bits.toStore(hidDevice.getVendorId()).toString(16));
-    });
+        .findFirst()
+        .ifPresent(
+            hidDevice -> {
+              physicalDevice = hidDevice;
+              logger.info(
+                  "Found a compatible device {}: 0x{} / 0x{}",
+                  hidDevice.getProduct(),
+                  Bits.toStore(hidDevice.getProductId()).toString(16),
+                  Bits.toStore(hidDevice.getVendorId()).toString(16));
+            });
 
     if (physicalDevice == null) {
       throw new UnsupportedOperationException(
@@ -70,9 +71,10 @@ public class Driver implements Closeable {
               logger.warn("Connected compatible device detached");
               try {
                 physicalDevice.close();
-              } catch (Throwable ignored) {
+              } catch (Throwable ex) {
                 // we don't bother if there's any exception while closing the device
                 // the idea is that the device is closed or unavailable
+                logger.error("Can not close the device", ex);
               }
               physicalDevice = null;
             }
@@ -86,9 +88,10 @@ public class Driver implements Closeable {
               logger.warn("Connected compatible device detached");
               try {
                 physicalDevice.close();
-              } catch (Throwable ignored) {
+              } catch (Throwable ex) {
                 // we don't bother if there's any exception while closing the device
                 // the idea is that the device is closed or unavailable
+                logger.error("Can not close the device", ex);
               }
               physicalDevice = null;
             }

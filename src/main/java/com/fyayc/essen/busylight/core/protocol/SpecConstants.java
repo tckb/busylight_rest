@@ -154,14 +154,18 @@ public final class SpecConstants {
   }
 
   public static ProtocolSpec pulseSpec(java.awt.Color color) {
-    return pulseSpec(color,
+    return pulseSpec(
+        color,
         new double[]{
-            PULSE_GAP_TIME, PULSE_GAP_TIME * 2, PULSE_GAP_TIME * 2,
+            PULSE_GAP_TIME,
+            PULSE_GAP_TIME * 2,
+            PULSE_GAP_TIME * 2,
             PULSE_GAP_TIME * 4,
-            PULSE_GAP_TIME * 2, PULSE_GAP_TIME * 2, PULSE_GAP_TIME
+            PULSE_GAP_TIME * 2,
+            PULSE_GAP_TIME * 2,
+            PULSE_GAP_TIME
         });
   }
-
 
   public static ProtocolSpec pulseSpec(java.awt.Color color, double[] pulseDuration) {
     Color[][] interpolatedColors =

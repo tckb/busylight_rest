@@ -2,52 +2,52 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.fyayc.essen</groupId>
   <artifactId>busylight-core</artifactId>
-  <version>1.0.1</version>
-  <packaging>jar</packaging>
-  <name>Busylight Driver</name>
-  <description>library for interacting with busylight</description>
-
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.6.2</version>
         <configuration>
           <source>8</source>
           <target>8</target>
         </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.6.2</version>
       </plugin>
     </plugins>
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.hid4java</groupId>
       <artifactId>hid4java</artifactId>
+      <groupId>org.hid4java</groupId>
       <version>0.5.0</version>
     </dependency>
     <dependency>
-      <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
+      <groupId>com.google.guava</groupId>
       <version>27.1-jre</version>
     </dependency>
     <dependency>
-      <groupId>com.tomgibara.bits</groupId>
       <artifactId>bits</artifactId>
+      <groupId>com.tomgibara.bits</groupId>
       <version>2.1.0</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
       <version>2.11.2</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
       <version>2.11.2</version>
     </dependency>
   </dependencies>
+  <description>library for interacting with busylight</description>
+  <groupId>com.fyayc.essen</groupId>
+  <modelVersion>4.0.0</modelVersion>
+  <name>Busylight Driver</name>
+
+  <packaging>jar</packaging>
+  <version>1.0.1</version>
 </project>
