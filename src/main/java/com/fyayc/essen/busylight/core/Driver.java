@@ -14,35 +14,31 @@ import org.hid4java.HidServices;
 import org.hid4java.HidServicesListener;
 import org.hid4java.event.HidServicesEvent;
 
-/** the driver class for finding, connecting and communicating with the device */
+/**
+ * the driver class for finding, connecting and communicating with the device
+ */
 public class Driver implements Closeable {
+
   protected static final Logger logger = LogManager.getLogger(Driver.class);
   protected static final int MAX_CONNECT_RETRIES = 5;
   private HidDevice physicalDevice = null;
   private KeepAliveThread keepAliveThread;
-  private boolean isRetriable = true;
 
   private Driver() {
     logger.trace("Searching for compatible  devices");
-
     HidServices hidServices = HidManager.getHidServices();
-    for (HidDevice hidDevice : hidServices.getAttachedHidDevices()) {
-      logger.trace(
-          "Found {}: 0x{} / 0x{} ",
+    hidServices.getAttachedHidDevices()
+        .stream()
+        .filter(this::isCompatibleDevice)
+        .findFirst().ifPresent(hidDevice -> {
+      physicalDevice = hidDevice;
+      logger.info(
+          "Found a compatible device {}: 0x{} / 0x{}",
           hidDevice.getProduct(),
           Bits.toStore(hidDevice.getProductId()).toString(16),
           Bits.toStore(hidDevice.getVendorId()).toString(16));
+    });
 
-      if (isCompatibleDevice(hidDevice)) {
-        physicalDevice = hidDevice;
-        logger.info(
-            "Found a compatible device {}: 0x{} / 0x{}",
-            hidDevice.getProduct(),
-            Bits.toStore(hidDevice.getProductId()).toString(16),
-            Bits.toStore(hidDevice.getVendorId()).toString(16));
-        break;
-      }
-    }
     if (physicalDevice == null) {
       throw new UnsupportedOperationException(
           "Unable to open the device, is the device connected?");
@@ -75,6 +71,8 @@ public class Driver implements Closeable {
               try {
                 physicalDevice.close();
               } catch (Throwable ignored) {
+                // we don't bother if there's any exception while closing the device
+                // the idea is that the device is closed or unavailable
               }
               physicalDevice = null;
             }
@@ -89,6 +87,8 @@ public class Driver implements Closeable {
               try {
                 physicalDevice.close();
               } catch (Throwable ignored) {
+                // we don't bother if there's any exception while closing the device
+                // the idea is that the device is closed or unavailable
               }
               physicalDevice = null;
             }
@@ -103,7 +103,9 @@ public class Driver implements Closeable {
 
   private boolean isValidProductId(short productId) {
     for (short supportedProductId : SpecConstants.SUPPORTED_PRODUCT_IDS) {
-      if (productId == supportedProductId) return true;
+      if (productId == supportedProductId) {
+        return true;
+      }
     }
     return false;
   }
@@ -115,7 +117,7 @@ public class Driver implements Closeable {
   }
 
   private boolean isPreviouslyAttached(HidDevice someDevice) {
-    return physicalDevice != null && Objects.equals(someDevice, physicalDevice);
+    return Objects.equals(someDevice, physicalDevice);
   }
 
   /**
@@ -123,7 +125,7 @@ public class Driver implements Closeable {
    *
    * @param buffer the buffer
    */
-  public void sendRawBuffer(byte[] buffer) {
+  private void sendRawBuffer(byte[] buffer) {
     if (tryAndOpen()) {
       physicalDevice.write(buffer, buffer.length, (byte) 0);
       logger.trace("Sent buffer data of {} bytes", buffer.length);
@@ -136,34 +138,29 @@ public class Driver implements Closeable {
       return true;
     } else {
       logger.info("device connection lost, retrying to open");
-      if (isRetriable) {
-        try {
-          int tryIx = 0;
-          while (tryIx < MAX_CONNECT_RETRIES) {
+      try {
+        int tryIx = 0;
+        while (tryIx < MAX_CONNECT_RETRIES) {
 
-            if (physicalDevice == null) {
-              logger.warn("Connected device is lost... may be this was detached.");
+          if (physicalDevice == null) {
+            logger.warn("Connected device is lost... may be this was detached.");
+          } else {
+            if (!physicalDevice.open()) {
+              logger.warn("retry# {}", tryIx);
             } else {
-              if (!physicalDevice.open()) {
-                logger.warn("retry# {}", tryIx);
-              } else {
-                logger.info("Device is now opened!");
-                return true;
-              }
+              logger.info("Device is now opened!");
+              return true;
             }
-
-            tryIx++;
-            Thread.sleep(2000);
           }
-        } catch (InterruptedException e) {
-          logger.error("Unable to sleep, interrupted", e);
+
+          tryIx++;
+          Thread.sleep(2000);
         }
-        logger.warn("Unable to open the device");
-        return false;
-      } else {
-        logger.info("Can not retry, isRetriable = false");
-        return false;
+      } catch (InterruptedException e) {
+        logger.error("Unable to sleep, interrupted", e);
       }
+      logger.warn("Unable to open the device");
+      return false;
     }
   }
 
@@ -208,14 +205,15 @@ public class Driver implements Closeable {
   }
 
   private class KeepAliveThread extends Thread {
+
     private final Logger logger = LogManager.getLogger(KeepAliveThread.class);
     private final long keepAliveFreq;
     private boolean interrupt = false;
 
-    private KeepAliveThread(long frqeuency) {
+    private KeepAliveThread(long frequency) {
       super("busylight-keepalive-thread");
       this.setDaemon(true);
-      this.keepAliveFreq = frqeuency;
+      this.keepAliveFreq = frequency;
       logger.info("Starting the keep alive thread with freq {} mills", keepAliveFreq);
     }
 
