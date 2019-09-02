@@ -37,12 +37,9 @@ public class Driver implements Closeable {
               Bits.toStore(hidDevice.getVendorId()).toString(16));
         })
         .findFirst()
-        .orElse(null);
+        .orElseThrow(() -> new UnsupportedOperationException(
+            "Unable to open the device, is the device connected?"));
 
-    if (physicalDevice == null) {
-      throw new UnsupportedOperationException(
-          "Unable to open the device, is the device connected?");
-    }
     if (!tryAndOpen()) {
       throw new UnsupportedOperationException(
           "Unable to open the device, is it already opened by some other process?");
@@ -203,6 +200,7 @@ public class Driver implements Closeable {
   }
 
   private static class DriverHelper {
+
     private static final Driver INSTANCE = new Driver();
   }
 

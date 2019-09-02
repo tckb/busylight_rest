@@ -1,5 +1,5 @@
 # Busylight Driver
-The project `busylight-core` is a complete and comprehensive driver implementation of the protocol specification of Busylight for revision 2.2. The purpose of this module/project is to only act as a driver for communicating with the busylight device. Most common interactions are already covered in the "high-level" api. For custom specification, you can use the `ProtocolSpec#builder`    
+The project `busylight-core` is a complete and comprehensive driver implementation of the protocol specification of Busylight for [revision 2.2](docs/Busylight.API.rev.2.2.-.22052015.pdf). The purpose of this module/project is to only act as a driver for communicating with the busylight device. Most common interactions are already covered in the "high-level" api. For custom specification, you can use the `ProtocolSpec#builder`    
 
 The implementation is structured logically into the following ---
 
@@ -60,7 +60,7 @@ try (Driver driver = Driver.tryAndAcquire()) {
 }
 ```
 #### Custom spec
-For eg, consider the following specification from the protocol: 
+For eg, consider the following specification from the [protocol documentation](docs/Busylight.API.rev.2.2.-.22052015.pdf): 
 
 * Step 0: Blink blue (20% intensity) 3 times (DC:0.5s on 0.5s off), turn off audio; then jump to step 1
 * Step 1: Blink red (80% intensity) 5 times (DC:1.5s on 0.5s off), audio setting ignored; then jump to step 2 
