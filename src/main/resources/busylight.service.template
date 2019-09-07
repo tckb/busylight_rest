@@ -1,0 +1,12 @@
+[Unit]
+Description=Busylight rest service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/busylight/
+ExecStart=java -Xms50M -Xmx50M -jar busylight-server-0.5.jar --logging.level.com.fyayc.essen.busylight=trace
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
