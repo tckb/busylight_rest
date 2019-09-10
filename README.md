@@ -41,5 +41,9 @@ Once the above command is run successfully, the console is available at port *80
 
 Please check the service tempate [here](https://github.com/tckb/busylight_rest/blob/master/src/main/resources/busylight.service.template)
 
-## Sample use?
+## Show me something cool?
+
+https://twitter.com/this_is_tckb/status/1171320757550485504
+
+![](/media/shortcuts.gif)
 
