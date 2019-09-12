@@ -35,7 +35,7 @@ $ java -jar target/busylight-server-1.1.jar  --spring.security.user.name=busylig
 ## Api-Console
 Once the above command is run successfully, the console is available at port *8080*.  For more details, consult the [application.properties](https://github.com/tckb/busylight_rest/blob/master/src/main/resources/application.properties)
 
-### Screenshots
+![](/media/api-console.png)
 
 ## Installing as System.d service.
 
